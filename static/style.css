@@ -12,6 +12,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 .container {
@@ -56,7 +57,7 @@ body {
 }
 
 /* ---------------------------
-   誕生日入力トグル（右上の丸）
+   右上丸ボタン
 --------------------------- */
 .birthday-toggle {
     position: absolute;
@@ -69,7 +70,7 @@ body {
 }
 
 /* ---------------------------
-   テーマ切替ボタン
+   白黒テーマ切替ボタン
 --------------------------- */
 .theme-switch {
     margin-top: 10px;
@@ -80,6 +81,10 @@ body {
 .theme-btn {
     font-size: 16px;
     cursor: pointer;
+    padding: 2px 5px;
+    border: 1px solid #888;
+    border-radius: 3px;
+    user-select: none;
 }
 
 /* ---------------------------
@@ -94,6 +99,7 @@ body {
 #clockCanvas {
     background-color: var(--bg-color);
     border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 /* ---------------------------
@@ -105,6 +111,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     pointer-events: none;
+    width: 0;
 }
 
 .coin {
@@ -125,7 +132,7 @@ body {
 }
 
 /* ---------------------------
-   白黒テーマ切替
+   白黒テーマ
 --------------------------- */
 body.light-theme {
     --bg-color: white;
@@ -138,7 +145,7 @@ body.dark-theme {
 }
 
 /* ---------------------------
-   レスポンシブ調整
+   レスポンシブ対応
 --------------------------- */
 @media screen and (max-width: 500px) {
     #clockCanvas {
