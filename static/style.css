@@ -1,5 +1,5 @@
 /* ---------------------------
-   全体コンテナ
+   全体スタイル
 --------------------------- */
 body {
     font-family: Arial, sans-serif;
@@ -31,7 +31,25 @@ body {
 }
 
 /* ---------------------------
-   半透明ボックス
+   セントラル初回入力ボックス
+--------------------------- */
+#initialBirthdayBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 101;
+}
+
+/* ---------------------------
+   半透明右上ボックス
 --------------------------- */
 .birthday-box {
     position: fixed;
@@ -45,6 +63,7 @@ body {
     display: flex;
     gap: 10px;
     z-index: 99;
+    display: none;
 }
 
 /* ---------------------------
@@ -85,7 +104,7 @@ body {
 }
 
 /* ---------------------------
-   現在価値表示
+   人的資本表示
 --------------------------- */
 #timeValue {
     margin: 20px 0 10px 0;
