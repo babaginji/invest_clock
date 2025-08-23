@@ -12,7 +12,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
+    padding: 20px;
 }
 
 h1, h2 {
@@ -36,18 +37,15 @@ button {
     background-color: #4CAF50;
     color: white;
     cursor: pointer;
+    margin-bottom: 30px;
 }
 
 button:hover {
     background-color: #45a049;
 }
 
-.clock {
-    font-size: 72px;
-    font-weight: bold;
-    background: #fff;
-    padding: 40px;
-    border-radius: 20px;
+#clockCanvas {
+    background-color: #fff;
+    border-radius: 50%;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    margin-top: 30px;
 }
