@@ -1,90 +1,103 @@
 /* ---------------------------
-   全体スタイル
+   全体コンテナ
 --------------------------- */
-:root {
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     --bg-color: white;
     --text-color: black;
 }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-}
-
 .container {
-    text-align: center;
-    padding: 20px;
-}
-
-/* ---------------------------
-   誕生日入力ボックス
---------------------------- */
-.birthday-box {
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 10px;
-    padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
-
-.select-row {
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
-}
-
-.select-row select {
-    font-size: 14px;
-    padding: 3px;
-    margin-right: 5px;
-}
-
-/* 保存ボタン */
-#saveBirthdayBtn {
-    margin-top: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
+    padding: 20px;
 }
 
 /* ---------------------------
    右上丸ボタン
 --------------------------- */
 .birthday-toggle {
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 10px;
+    font-size: 24px;
     cursor: pointer;
-    font-size: 18px;
-    user-select: none;
-    z-index: 110;
+    z-index: 100;
 }
 
 /* ---------------------------
-   白黒テーマ切替ボタン
+   半透明ボックス
+--------------------------- */
+.birthday-box {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background-color: rgba(255,255,255,0.85);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    flex-direction: column;
+    display: flex;
+    gap: 10px;
+    z-index: 99;
+}
+
+/* ---------------------------
+   年月日セレクトボックス
+--------------------------- */
+.select-row {
+    display: flex;
+    gap: 5px;
+}
+
+.select-row select {
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* ---------------------------
+   保存ボタン
+--------------------------- */
+#saveBirthdayBtn {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* ---------------------------
+   白黒テーマ切替
 --------------------------- */
 .theme-switch {
-    margin-top: 10px;
     display: flex;
     gap: 5px;
 }
 
 .theme-btn {
-    font-size: 16px;
     cursor: pointer;
-    padding: 2px 5px;
-    border: 1px solid #888;
+    padding: 2px 6px;
+    border: 1px solid #333;
     border-radius: 3px;
-    user-select: none;
+}
+
+/* ---------------------------
+   現在価値表示
+--------------------------- */
+#timeValue {
+    margin: 20px 0 10px 0;
+    font-size: 24px;
+}
+
+/* ---------------------------
+   総人的資本表示
+--------------------------- */
+#totalValue {
+    margin-top: 10px;
+    font-size: 18px;
 }
 
 /* ---------------------------
@@ -92,65 +105,30 @@ body {
 --------------------------- */
 .clock-wrapper {
     position: relative;
-    display: inline-block;
-    margin-top: 50px;
+    width: 300px;
+    height: 300px;
 }
 
 #clockCanvas {
-    background-color: var(--bg-color);
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    width: 100%;
+    height: 100%;
 }
 
 /* ---------------------------
-   コインアニメーション
+   コイン演出
 --------------------------- */
 #coinContainer {
     position: absolute;
-    top: 100%;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     pointer-events: none;
-    width: 0;
 }
 
 .coin {
     position: absolute;
-    font-size: 12px;
-    padding: 2px 4px;
-    background-color: gold;
-    border-radius: 50%;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    white-space: nowrap;
+    font-size: 14px;
+    font-weight: bold;
+    color: gold;
+    text-shadow: 1px 1px 2px #000;
 }
-
-/* ---------------------------
-   総資産表示
---------------------------- */
-#totalValue {
-    margin-top: 20px;
-}
-
-/* ---------------------------
-   白黒テーマ
---------------------------- */
-body.light-theme {
-    --bg-color: white;
-    --text-color: black;
-}
-
-body.dark-theme {
-    --bg-color: black;
-    --text-color: white;
-}
-
-/* ---------------------------
-   レスポンシブ対応
---------------------------- */
-@media screen and (max-width: 500px) {
-    #clockCanvas {
-        width: 250px;
-        height: 250px;
-    }
-}
-
