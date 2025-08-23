@@ -1,44 +1,194 @@
 /* --------------------
-   テーマカラー
+   基本レイアウト
 -------------------- */
-body.light-theme{--bg-color:#ffffff;--text-color:#000000;}
-body.dark-theme{--bg-color:#000000;--text-color:#ffffff;}
-body{background-color:var(--bg-color);color:var(--text-color);transition:0.3s;}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    --bg-color: white;       /* 背景色変数（テーマ用） */
+    --text-color: black;     /* 文字色変数（テーマ用） */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.container {
+    width: 90%;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 20px;
+}
 
 /* --------------------
-   コンテナ
+   誕生日入力ボックス
 -------------------- */
-.container{text-align:center;padding:20px;}
+.birthday-box {
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(255,255,255,0.9);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    gap: 10px;
+    z-index: 10;
+}
+
+.birthday-box select {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.birthday-box button {
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* 年/月/日セレクトボックス行 */
+.select-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
 
 /* --------------------
-   誕生日ボックス
+   右上丸ボタン
 -------------------- */
-.birthday-box{display:none;flex-direction:column;position:absolute;top:50px;right:20px;background:rgba(255,255,255,0.8);border:1px solid #ccc;padding:15px;border-radius:8px;z-index:100;}
-.select-row{margin:5px 0;}
-.birthday-toggle{position:absolute;top:10px;right:20px;font-size:20px;cursor:pointer;}
+.birthday-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 15;
+}
 
 /* --------------------
-   テーマ切替
+   人的資本表示
 -------------------- */
-.theme-switch{margin-top:10px;display:flex;gap:10px;justify-content:center;}
-.theme-btn{cursor:pointer;font-size:20px;padding:5px;}
+#timeValue {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#totalValue {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
 
 /* --------------------
    時計
 -------------------- */
-.clock-wrapper{position:relative;display:inline-block;margin-top:20px;}
-#coinContainer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
-.coin{position:absolute;top:50%;transform:translateX(-50%);background:gold;border-radius:50%;padding:5px 10px;font-size:14px;box-shadow:0 0 5px rgba(0,0,0,0.3);}
+.clock-wrapper {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 20px auto;
+}
+
+#clockCanvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* 円形 */
+}
 
 /* --------------------
-   合計表示
+   コインアニメーション
 -------------------- */
-#totalValue{margin-top:20px;font-size:20px;font-weight:bold;}
-/* --------------------
-   現在価値表示（人的資本）を累計と同じサイズに
--------------------- */
-#timeValue {
-    font-size: 20px;          /* 累計表示と同じサイズ */
+#coinContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 100%;
+    pointer-events: none;
+}
+
+.coin {
+    position: absolute;
+    background-color: gold;
+    color: black;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 12px;
     font-weight: bold;
-    margin-top: 10px;
+    opacity: 0.9;
+}
+
+/* --------------------
+   テーマ切替ボタン
+-------------------- */
+.theme-switch {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.theme-btn {
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* --------------------
+   複利時計説明ボックス
+-------------------- */
+.explanation-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    max-width: 400px;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    transform: translate(-50%, -50%);
+    z-index: 20;
+}
+
+.explanation-box h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.explanation-box p {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* --------------------
+   テーマ: 白
+-------------------- */
+.light-theme {
+    --bg-color: white;
+    --text-color: black;
+}
+
+/* --------------------
+   テーマ: 黒
+-------------------- */
+.dark-theme {
+    --bg-color: black;
+    --text-color: white;
+}
+
+/* --------------------
+   ボタン全般
+-------------------- */
+button {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+button:hover {
+    background-color: #ddd;
 }
