@@ -9,34 +9,29 @@
 <body class="light-theme">
     <div class="container">
 
-        <!-- 誕生日入力ボックス -->
-        <div id="birthdayBox" class="birthday-box">
-            <!-- 年 -->
-            <div class="select-row">
-                <select id="birthYear"></select>
-                <label for="birthYear">年</label>
-            </div>
-            <!-- 月 -->
-            <div class="select-row">
-                <select id="birthMonth"></select>
-                <label for="birthMonth">月</label>
-            </div>
-            <!-- 日 -->
-            <div class="select-row">
-                <select id="birthDay"></select>
-                <label for="birthDay">日</label>
-            </div>
-            <button id="saveBirthdayBtn">保存</button>
+        <!-- 年齢入力ボックス → 生年月日入力ボックス -->
+<div id="birthdayBox" class="birthday-box">
+    <!-- タイトル追加 -->
+    <div class="box-title">生年月日</div>
 
-            <!-- テーマ切替ボタン -->
-            <div class="theme-switch">
-                <span id="lightBtn" class="theme-btn">□</span>
-                <span id="darkBtn" class="theme-btn">■</span>
-            </div>
+    <!-- 年/月/日セレクトボックス -->
+    <div class="select-row">
+        <select id="birthYear"></select>
+        <select id="birthMonth"></select>
+        <select id="birthDay"></select>
+    </div>
+    <button id="saveBirthdayBtn">保存</button>
 
-            <!-- 複利時計説明ボタン -->
-            <button id="showExplanationBtn" class="explain-btn">複利時計とは</button>
-        </div>
+    <!-- □■とテーマ切替 -->
+    <div class="theme-switch">
+        <span id="lightBtn" class="theme-btn">□</span>
+        <span id="darkBtn" class="theme-btn">■</span>
+    </div>
+
+    <!-- 複利時計説明ボタン -->
+    <button id="showExplanationBtn">複利時計とは</button>
+</div>
+
 
         <!-- 右上の丸 -->
         <div id="birthdayToggle" class="birthday-toggle">○</div>
