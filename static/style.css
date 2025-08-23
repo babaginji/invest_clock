@@ -5,8 +5,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: white;
+    color: black;
     --bg-color: white;
     --text-color: black;
 }
@@ -31,7 +31,7 @@ body {
 }
 
 /* ---------------------------
-   セントラル初回入力ボックス
+   初回中央生年月日入力
 --------------------------- */
 #initialBirthdayBox {
     position: fixed;
@@ -49,7 +49,7 @@ body {
 }
 
 /* ---------------------------
-   半透明右上ボックス
+   右上変更用ボックス
 --------------------------- */
 .birthday-box {
     position: fixed;
@@ -60,10 +60,9 @@ body {
     border-radius: 8px;
     padding: 10px;
     flex-direction: column;
-    display: flex;
+    display: none; /* 初期は非表示 */
     gap: 10px;
     z-index: 99;
-    display: none;
 }
 
 /* ---------------------------
@@ -82,7 +81,7 @@ body {
 /* ---------------------------
    保存ボタン
 --------------------------- */
-#saveBirthdayBtn {
+button {
     padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
