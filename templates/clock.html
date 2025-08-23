@@ -6,12 +6,18 @@
     <title>複利時計</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="light-theme">
     <div class="container">
         <!-- 年齢入力ボックス -->
         <div id="ageBox" class="age-box">
             <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
             <button id="saveAgeBtn">保存</button>
+
+            <!-- テーマ切り替え -->
+            <div class="theme-switch">
+                <span id="lightBtn" class="theme-btn">□</span>
+                <span id="darkBtn" class="theme-btn">■</span>
+            </div>
         </div>
 
         <!-- 右上のトグルボタン -->
@@ -38,14 +44,15 @@
 
         let totalValue = 0; // 生涯合計の値
 
-        // 年齢から84歳時点の1秒あたり価値を計算
+        // ---------------------------
+        // 年齢関連
+        // ---------------------------
         function calculateFutureValue(age) {
             const yearsToGo = TARGET_AGE - age;
             const currentPerSecond = CURRENT_HOURLY_VALUE / 3600;
             return currentPerSecond * Math.pow(1 + ANNUAL_INTEREST, yearsToGo);
         }
 
-        // 84歳時点の1時間あたり価値を表示
         function updateTimeValue(age) {
             const fv_per_second = calculateFutureValue(age);
             const fv_per_hour = fv_per_second * 3600;
@@ -53,13 +60,11 @@
                 `現在価値: ¥${fv_per_hour.toFixed(2)} / h`;
         }
 
-        // 合計値を表示
         function updateTotalValue() {
             document.getElementById('totalValue').textContent =
                 `生涯合計: ¥${totalValue.toFixed(0)}`;
         }
 
-        // 年齢保存
         function saveAge() {
             const age = parseInt(document.getElementById('ageInput').value);
             if (!isNaN(age) && age > 0 && age < 120) {
@@ -72,11 +77,9 @@
             }
         }
 
-        // 年齢入力ボックス表示/非表示
         function showAgeBox() { document.getElementById('ageBox').style.display = 'flex'; }
         function hideAgeBox() { document.getElementById('ageBox').style.display = 'none'; }
 
-        // 外部クリックでボックス非表示
         document.addEventListener('click', function(e){
             const ageBox = document.getElementById('ageBox');
             const toggle = document.getElementById('ageToggle');
@@ -85,7 +88,9 @@
             }
         });
 
-        // 時計描画
+        // ---------------------------
+        // 時計
+        // ---------------------------
         function drawClock() {
             const canvas = document.getElementById('clockCanvas');
             const ctx = canvas.getContext('2d');
@@ -101,9 +106,9 @@
             ctx.clearRect(-radius, -radius, radius*2, radius*2);
             ctx.beginPath();
             ctx.arc(0, 0, radius, 0, 2*Math.PI);
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-color');
             ctx.fill();
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
             ctx.lineWidth = radius*0.05;
             ctx.stroke();
 
@@ -114,12 +119,13 @@
                 const outerRadius = radius*0.95;
                 ctx.moveTo(innerRadius * Math.sin(ang), -innerRadius * Math.cos(ang));
                 ctx.lineTo(outerRadius * Math.sin(ang), -outerRadius * Math.cos(ang));
-                ctx.strokeStyle = '#333';
+                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
                 ctx.lineWidth = 2;
                 ctx.stroke();
             }
 
             ctx.font = radius*0.15 + "px Arial";
+            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             for (let num=1; num<=12; num++) {
@@ -149,7 +155,6 @@
             second = second*Math.PI/30;
             drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
 
-            // 毎秒コイン生成と合計更新
             const age = parseInt(localStorage.getItem('userAge')) || 30;
             const fv_per_second = calculateFutureValue(age);
             startCoinAnimation(fv_per_second);
@@ -157,11 +162,11 @@
             updateTotalValue();
         }
 
-        function drawHand(ctx, pos, length, width, color='black') {
+        function drawHand(ctx, pos, length, width, color=null) {
             ctx.beginPath();
             ctx.lineWidth = width;
             ctx.lineCap = "round";
-            ctx.strokeStyle = color;
+            ctx.strokeStyle = color || getComputedStyle(document.body).getPropertyValue('--text-color');
             ctx.moveTo(0,0);
             ctx.rotate(pos);
             ctx.lineTo(0, -length);
@@ -169,7 +174,6 @@
             ctx.rotate(-pos);
         }
 
-        // コインアニメーション
         function startCoinAnimation(valuePerSecond) {
             const coinContainer = document.getElementById('coinContainer');
             const coin = document.createElement('div');
@@ -193,7 +197,6 @@
             }, COIN_FADE_TIME);
         }
 
-        // 初期合計値を設定
         function initTotalValue(age) {
             const fv_per_second = calculateFutureValue(age);
             const secondsLived = age * 365.25 * 24 * 3600;
@@ -201,7 +204,23 @@
             updateTotalValue();
         }
 
-        // ページ初期化
+        // ---------------------------
+        // テーマ切り替え
+        // ---------------------------
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.remove('light-theme');
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // ---------------------------
+        // 初期化
+        // ---------------------------
         window.onload = function() {
             const toggle = document.getElementById('ageToggle');
             const savedAge = parseInt(localStorage.getItem('userAge'));
@@ -217,6 +236,12 @@
 
             toggle.addEventListener('click', showAgeBox);
             document.getElementById('saveAgeBtn').addEventListener('click', saveAge);
+
+            document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
+            document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
 
             updateTimeValue(age);
             initTotalValue(age);
