@@ -39,7 +39,7 @@ function calculateFutureValue(age) {
 
 function updateTimeValue(age) {
     const fv_per_second = calculateFutureValue(age);
-    const fv_per_hour = fv_per_second * 3600;
+    const fv_per_hour = fv_per_second * 2600;
     document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
 }
 
