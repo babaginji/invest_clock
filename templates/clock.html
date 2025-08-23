@@ -1,151 +1,170 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>複利時計</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>複利時計</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>年齢を入力して84歳時点の時間価値（1時間あたり）を計算</h2>
-        <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
-        <button onclick="saveAge()">保存</button>
+<div class="container">
+    <h2>年齢を入力して84歳時点の時間価値（1時間あたり）を計算</h2>
+    <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
+    <button onclick="saveAge()">保存</button>
 
-        <h1 id="timeValue">84歳時点の価値: ¥{{ future_value }} / 時間</h1>
-        <h2 id="secondValue"></h2>
+    <h1 id="timeValue">84歳時点の価値: ¥{{ future_value }} / 時間</h1>
 
-        <canvas id="clockCanvas" width="400" height="400"></canvas>
+    <div class="clock-wrapper">
+        <canvas id="clockCanvas" width="300" height="300"></canvas>
+        <div id="coinContainer"></div>
     </div>
+</div>
 
-    <script>
-        const TARGET_AGE = 84;
-        const ANNUAL_INTEREST = 0.07;
+<script>
+const TARGET_AGE = 84;
+const ANNUAL_INTEREST = 0.07;
+const COIN_FADE_TIME = 2000; // 2秒で消える
 
-        function calculateFutureValue(age) {
-            const yearsToGo = TARGET_AGE - age;
-            return Math.pow(1 + ANNUAL_INTEREST, yearsToGo); // 1秒あたり
-        }
+function calculateFutureValue(age) {
+    const yearsToGo = TARGET_AGE - age;
+    return Math.pow(1 + ANNUAL_INTEREST, yearsToGo); // 1秒あたり
+}
 
-        function updateTimeValue(age) {
-            const fv_per_second = calculateFutureValue(age);
-            const fv_per_hour = fv_per_second * 3600;
-            document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
+function updateTimeValue(age) {
+    const fv_per_second = calculateFutureValue(age);
+    const fv_per_hour = fv_per_second * 3600;
+    document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
+    startCoinAnimation(fv_per_second);
+}
 
-            // 秒ごとの減少演出
-            let currentValue = fv_per_second;
-            const secondElem = document.getElementById('secondValue');
-            setInterval(() => {
-                currentValue = currentValue * Math.pow(1 + ANNUAL_INTEREST, 1/31536000); // 1秒分の複利減少演出
-                secondElem.textContent = `現在1秒あたりの価値: ¥${currentValue.toFixed(4)}`;
-            }, 1000);
-        }
+function saveAge() {
+    const age = parseInt(document.getElementById('ageInput').value);
+    if (!isNaN(age) && age > 0 && age < 120) {
+        localStorage.setItem('userAge', age);
+        updateTimeValue(age);
+    } else {
+        alert("0~120の有効な年齢を入力してください");
+    }
+}
 
-        function saveAge() {
-            const age = parseInt(document.getElementById('ageInput').value);
-            if (!isNaN(age) && age > 0 && age < 120) {
-                localStorage.setItem('userAge', age);
-                updateTimeValue(age);
-            } else {
-                alert("0~120の有効な年齢を入力してください");
-            }
-        }
+// コインアニメーション
+function startCoinAnimation(valuePerSecond) {
+    const coinContainer = document.getElementById('coinContainer');
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
+    coinContainer.appendChild(coin);
 
-        // 時計描画
-        function drawClock() {
-            const canvas = document.getElementById('clockCanvas');
-            const ctx = canvas.getContext('2d');
-            const radius = canvas.height / 2;
-            ctx.translate(radius, radius);
-            setInterval(() => {
-                drawFace(ctx, radius);
-                drawTime(ctx, radius);
-            }, 1000);
-        }
+    // ランダムに少し左右に散らす
+    const offsetX = (Math.random() - 0.5) * 40; 
+    coin.style.left = `calc(50% + ${offsetX}px)`;
 
-        function drawFace(ctx, radius) {
-            ctx.clearRect(-radius, -radius, radius*2, radius*2);
+    // アニメーション
+    coin.animate([
+        { transform: 'translateY(0)', opacity: 1 },
+        { transform: 'translateY(100px)', opacity: 0 }
+    ], {
+        duration: COIN_FADE_TIME,
+        easing: 'ease-out'
+    });
 
-            // 文字盤
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, 2*Math.PI);
-            ctx.fillStyle = 'white';
-            ctx.fill();
+    // 終わったら削除
+    setTimeout(() => {
+        coinContainer.removeChild(coin);
+    }, COIN_FADE_TIME);
+}
 
-            // 外枠
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = radius*0.05;
-            ctx.stroke();
+// 時計描画
+function drawClock() {
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.height / 2;
+    ctx.translate(radius, radius);
+    setInterval(() => {
+        drawFace(ctx, radius);
+        drawTime(ctx, radius);
+    }, 1000);
+}
 
-            // 目盛線
-            for(let num=1; num<=12; num++){
-                const ang = num * Math.PI / 6;
-                ctx.beginPath();
-                const innerRadius = radius*0.88;
-                const outerRadius = radius*0.95;
-                ctx.moveTo(innerRadius * Math.sin(ang), -innerRadius * Math.cos(ang));
-                ctx.lineTo(outerRadius * Math.sin(ang), -outerRadius * Math.cos(ang));
-                ctx.strokeStyle = '#333';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
+function drawFace(ctx, radius) {
+    ctx.clearRect(-radius, -radius, radius*2, radius*2);
+    ctx.beginPath();
+    ctx.arc(0, 0, radius, 0, 2*Math.PI);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = radius*0.05;
+    ctx.stroke();
 
-            // 数字
-            ctx.font = radius*0.15 + "px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            for (let num=1; num<=12; num++) {
-                const ang = num * Math.PI / 6;
-                ctx.rotate(ang);
-                ctx.translate(0, -radius*0.75);
-                ctx.rotate(-ang);
-                ctx.fillText(num.toString(), 0, 0);
-                ctx.rotate(ang);
-                ctx.translate(0, radius*0.75);
-                ctx.rotate(-ang);
-            }
-        }
+    // 目盛線
+    for(let num=1; num<=12; num++){
+        const ang = num * Math.PI / 6;
+        ctx.beginPath();
+        const innerRadius = radius*0.88;
+        const outerRadius = radius*0.95;
+        ctx.moveTo(innerRadius * Math.sin(ang), -innerRadius * Math.cos(ang));
+        ctx.lineTo(outerRadius * Math.sin(ang), -outerRadius * Math.cos(ang));
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
 
-        function drawTime(ctx, radius) {
-            const now = new Date();
-            let hour = now.getHours() % 12;
-            let minute = now.getMinutes();
-            let second = now.getSeconds();
+    // 数字
+    ctx.font = radius*0.15 + "px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (let num=1; num<=12; num++) {
+        const ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius*0.75);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius*0.75);
+        ctx.rotate(-ang);
+    }
+}
 
-            // 時針
-            hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
-            drawHand(ctx, hour, radius*0.5, radius*0.07);
+function drawTime(ctx, radius) {
+    const now = new Date();
+    let hour = now.getHours() % 12;
+    let minute = now.getMinutes();
+    let second = now.getSeconds();
 
-            // 分針
-            minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
-            drawHand(ctx, minute, radius*0.7, radius*0.07);
+    hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
+    drawHand(ctx, hour, radius*0.5, radius*0.07);
 
-            // 秒針
-            second = second*Math.PI/30;
-            drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
-        }
+    minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+    drawHand(ctx, minute, radius*0.7, radius*0.07);
 
-        function drawHand(ctx, pos, length, width, color='black') {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = color;
-            ctx.moveTo(0,0);
-            ctx.rotate(pos);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-pos);
-        }
+    second = second*Math.PI/30;
+    drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
 
-        window.onload = function() {
-            var age = parseInt(localStorage.getItem('userAge'));
-            if (!age) {
-                age = parseInt("{{ default_age }}");
-            }
-            document.getElementById('ageInput').value = age;
-            updateTimeValue(age);
-            drawClock();
-        };
-    </script>
+    // 毎秒コイン生成
+    const age = parseInt(document.getElementById('ageInput').value);
+    const fv_per_second = calculateFutureValue(age);
+    startCoinAnimation(fv_per_second);
+}
+
+function drawHand(ctx, pos, length, width, color='black') {
+    ctx.beginPath();
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = color;
+    ctx.moveTo(0,0);
+    ctx.rotate(pos);
+    ctx.lineTo(0, -length);
+    ctx.stroke();
+    ctx.rotate(-pos);
+}
+
+window.onload = function() {
+    var age = parseInt(localStorage.getItem('userAge'));
+    if (!age) age = parseInt("{{ default_age }}");
+    document.getElementById('ageInput').value = age;
+    updateTimeValue(age);
+    drawClock();
+};
+</script>
 </body>
 </html>
