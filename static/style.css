@@ -34,3 +34,11 @@ body{background-color:var(--bg-color);color:var(--text-color);transition:0.3s;}
    合計表示
 -------------------- */
 #totalValue{margin-top:20px;font-size:20px;font-weight:bold;}
+/* --------------------
+   現在価値表示（人的資本）を累計と同じサイズに
+-------------------- */
+#timeValue {
+    font-size: 20px;          /* 累計表示と同じサイズ */
+    font-weight: bold;
+    margin-top: 10px;
+}
