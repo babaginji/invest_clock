@@ -13,8 +13,9 @@
         <button onclick="saveAge()">保存</button>
 
         <h1 id="timeValue">84歳時点の価値: ¥{{ future_value }} / 時間</h1>
+        <h2 id="secondValue"></h2>
 
-        <canvas id="clockCanvas" width="300" height="300"></canvas>
+        <canvas id="clockCanvas" width="400" height="400"></canvas>
     </div>
 
     <script>
@@ -30,6 +31,14 @@
             const fv_per_second = calculateFutureValue(age);
             const fv_per_hour = fv_per_second * 3600;
             document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
+
+            // 秒ごとの減少演出
+            let currentValue = fv_per_second;
+            const secondElem = document.getElementById('secondValue');
+            setInterval(() => {
+                currentValue = currentValue * Math.pow(1 + ANNUAL_INTEREST, 1/31536000); // 1秒分の複利減少演出
+                secondElem.textContent = `現在1秒あたりの価値: ¥${currentValue.toFixed(4)}`;
+            }, 1000);
         }
 
         function saveAge() {
@@ -42,6 +51,7 @@
             }
         }
 
+        // 時計描画
         function drawClock() {
             const canvas = document.getElementById('clockCanvas');
             const ctx = canvas.getContext('2d');
@@ -55,25 +65,43 @@
 
         function drawFace(ctx, radius) {
             ctx.clearRect(-radius, -radius, radius*2, radius*2);
+
+            // 文字盤
             ctx.beginPath();
             ctx.arc(0, 0, radius, 0, 2*Math.PI);
             ctx.fillStyle = 'white';
             ctx.fill();
+
+            // 外枠
             ctx.strokeStyle = '#333';
             ctx.lineWidth = radius*0.05;
             ctx.stroke();
 
+            // 目盛線
+            for(let num=1; num<=12; num++){
+                const ang = num * Math.PI / 6;
+                ctx.beginPath();
+                const innerRadius = radius*0.88;
+                const outerRadius = radius*0.95;
+                ctx.moveTo(innerRadius * Math.sin(ang), -innerRadius * Math.cos(ang));
+                ctx.lineTo(outerRadius * Math.sin(ang), -outerRadius * Math.cos(ang));
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // 数字
             ctx.font = radius*0.15 + "px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             for (let num=1; num<=12; num++) {
                 const ang = num * Math.PI / 6;
                 ctx.rotate(ang);
-                ctx.translate(0, -radius*0.85);
+                ctx.translate(0, -radius*0.75);
                 ctx.rotate(-ang);
                 ctx.fillText(num.toString(), 0, 0);
                 ctx.rotate(ang);
-                ctx.translate(0, radius*0.85);
+                ctx.translate(0, radius*0.75);
                 ctx.rotate(-ang);
             }
         }
@@ -84,12 +112,15 @@
             let minute = now.getMinutes();
             let second = now.getSeconds();
 
+            // 時針
             hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
             drawHand(ctx, hour, radius*0.5, radius*0.07);
 
+            // 分針
             minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
             drawHand(ctx, minute, radius*0.7, radius*0.07);
 
+            // 秒針
             second = second*Math.PI/30;
             drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
         }
