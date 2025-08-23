@@ -49,16 +49,13 @@
 
     <script>
         const TARGET_AGE = 84;
-        const ANNUAL_INTEREST = 0.07;  // 年利7%
-        const CURRENT_HOURLY_VALUE = 2600; // 現在価値ベース
+        const ANNUAL_INTEREST = 0.07;
+        const CURRENT_HOURLY_VALUE = 2600;
         const COIN_FADE_TIME = 2000;
 
         let birthDate = null;
         let totalValue = 0;
 
-        // ---------------------------
-        // 誕生日から年齢を計算（年＋日数）
-        // ---------------------------
         function getAgeInDays(birth) {
             const today = new Date();
             const diff = today - birth;
@@ -68,19 +65,13 @@
             return { years: ageYears, days: ageDays, totalDays: ageInDays };
         }
 
-        // ---------------------------
-        // 残り年数と日数で複利計算
-        // ---------------------------
         function calculateFutureHourlyValue(ageYears, ageDays) {
             const remainingYears = TARGET_AGE - ageYears - 1;
             const remainingDays = Math.round(365.25 - ageDays);
-
             const perSecond = CURRENT_HOURLY_VALUE / 3600;
 
-            // 年単位複利
             let valueAfterYears = perSecond * Math.pow(1 + ANNUAL_INTEREST, remainingYears);
 
-            // 日単位複利（日利率換算）
             const dailyRate = Math.pow(1 + ANNUAL_INTEREST, 1/365.25) - 1;
             let valueAfterDays = valueAfterYears * Math.pow(1 + dailyRate, remainingDays);
 
@@ -110,7 +101,7 @@
             birthDate = new Date(y, m-1, d);
             localStorage.setItem('userBirthday', birthDate.toISOString());
             hideBirthdayBox();
-            totalValue = 0; // リセット
+            totalValue = 0;
             const fv_per_second = updateTimeValue();
             updateTotalValue(fv_per_second);
         }
@@ -126,9 +117,6 @@
             }
         });
 
-        // ---------------------------
-        // 時計描画
-        // ---------------------------
         function drawClock() {
             const canvas = document.getElementById('clockCanvas');
             const ctx = canvas.getContext('2d');
@@ -212,9 +200,6 @@
             setTimeout(()=>coinContainer.removeChild(coin), COIN_FADE_TIME);
         }
 
-        // ---------------------------
-        // テーマ切替
-        // ---------------------------
         function setTheme(theme){
             if(theme==='dark'){
                 document.body.classList.remove('light-theme');
@@ -226,9 +211,6 @@
             localStorage.setItem('theme', theme);
         }
 
-        // ---------------------------
-        // セレクト初期化
-        // ---------------------------
         function initBirthdaySelectors(){
             const yearSel=document.getElementById('birthYear');
             const monthSel=document.getElementById('birthMonth');
@@ -241,14 +223,19 @@
             for(let d=1;d<=31;d++){let opt=document.createElement('option'); opt.value=d; opt.text=d; daySel.appendChild(opt);}
         }
 
-        // ---------------------------
-        // 初期化
-        // ---------------------------
         window.onload = function(){
             initBirthdaySelectors();
             const toggle=document.getElementById('birthdayToggle');
             const savedBirthday=localStorage.getItem('userBirthday');
-            if(savedBirthday){ birthDate=new Date(savedBirthday); hideBirthdayBox(); } else showBirthdayBox();
+            if(savedBirthday){
+                birthDate=new Date(savedBirthday);
+                hideBirthdayBox();
+                const age = birthDate;
+                document.getElementById('birthYear').value = birthDate.getFullYear();
+                document.getElementById('birthMonth').value = birthDate.getMonth()+1;
+                document.getElementById('birthDay').value = birthDate.getDate();
+            } else showBirthdayBox();
+
             toggle.addEventListener('click', showBirthdayBox);
             document.getElementById('saveBirthdayBtn').addEventListener('click', saveBirthday);
             document.getElementById('lightBtn').addEventListener('click', ()=>setTheme('light'));
