@@ -8,9 +8,16 @@
 </head>
 <body>
 <div class="container">
-    <h2>年齢を入力して84歳時点の時間価値（1時間あたり）を計算</h2>
-    <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
-    <button onclick="saveAge()">保存</button>
+    <h2>84歳時点の時間価値（1時間あたり）</h2>
+
+    <!-- 年齢入力ボックス -->
+    <div id="ageBox" class="age-box">
+        <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
+        <button id="saveAgeBtn">保存</button>
+    </div>
+
+    <!-- 右上の丸 -->
+    <div id="ageToggle" class="age-toggle">○</div>
 
     <h1 id="timeValue">84歳時点の価値: ¥{{ future_value }} / 時間</h1>
 
@@ -23,7 +30,7 @@
 <script>
 const TARGET_AGE = 84;
 const ANNUAL_INTEREST = 0.07;
-const COIN_FADE_TIME = 2000; // 2秒で消える
+const COIN_FADE_TIME = 2000;
 
 function calculateFutureValue(age) {
     const yearsToGo = TARGET_AGE - age;
@@ -34,45 +41,36 @@ function updateTimeValue(age) {
     const fv_per_second = calculateFutureValue(age);
     const fv_per_hour = fv_per_second * 3600;
     document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
-    startCoinAnimation(fv_per_second);
 }
 
+// 年齢保存
 function saveAge() {
     const age = parseInt(document.getElementById('ageInput').value);
     if (!isNaN(age) && age > 0 && age < 120) {
         localStorage.setItem('userAge', age);
         updateTimeValue(age);
+        hideAgeBox();
     } else {
         alert("0~120の有効な年齢を入力してください");
     }
 }
 
-// コインアニメーション
-function startCoinAnimation(valuePerSecond) {
-    const coinContainer = document.getElementById('coinContainer');
-    const coin = document.createElement('div');
-    coin.className = 'coin';
-    coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
-    coinContainer.appendChild(coin);
-
-    // ランダムに少し左右に散らす
-    const offsetX = (Math.random() - 0.5) * 40; 
-    coin.style.left = `calc(50% + ${offsetX}px)`;
-
-    // アニメーション
-    coin.animate([
-        { transform: 'translateY(0)', opacity: 1 },
-        { transform: 'translateY(100px)', opacity: 0 }
-    ], {
-        duration: COIN_FADE_TIME,
-        easing: 'ease-out'
-    });
-
-    // 終わったら削除
-    setTimeout(() => {
-        coinContainer.removeChild(coin);
-    }, COIN_FADE_TIME);
+// 年齢入力ボックス表示/非表示
+function showAgeBox() {
+    document.getElementById('ageBox').style.display = 'flex';
 }
+function hideAgeBox() {
+    document.getElementById('ageBox').style.display = 'none';
+}
+
+// 外部クリックでボックス非表示
+document.addEventListener('click', function(e){
+    const ageBox = document.getElementById('ageBox');
+    const toggle = document.getElementById('ageToggle');
+    if (!ageBox.contains(e.target) && !toggle.contains(e.target)) {
+        hideAgeBox();
+    }
+});
 
 // 時計描画
 function drawClock() {
@@ -141,7 +139,7 @@ function drawTime(ctx, radius) {
     drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
 
     // 毎秒コイン生成
-    const age = parseInt(document.getElementById('ageInput').value);
+    const age = parseInt(localStorage.getItem('userAge')) || 30;
     const fv_per_second = calculateFutureValue(age);
     startCoinAnimation(fv_per_second);
 }
@@ -158,11 +156,44 @@ function drawHand(ctx, pos, length, width, color='black') {
     ctx.rotate(-pos);
 }
 
+// コインアニメーション
+function startCoinAnimation(valuePerSecond) {
+    const coinContainer = document.getElementById('coinContainer');
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
+    coinContainer.appendChild(coin);
+
+    const offsetX = (Math.random() - 0.5) * 40; 
+    coin.style.left = `calc(50% + ${offsetX}px)`;
+
+    coin.animate([
+        { transform: 'translateY(0)', opacity: 1 },
+        { transform: 'translateY(100px)', opacity: 0 }
+    ], {
+        duration: 2000,
+        easing: 'ease-out'
+    });
+
+    setTimeout(() => {
+        coinContainer.removeChild(coin);
+    }, 2000);
+}
+
 window.onload = function() {
-    var age = parseInt(localStorage.getItem('userAge'));
-    if (!age) age = parseInt("{{ default_age }}");
-    document.getElementById('ageInput').value = age;
-    updateTimeValue(age);
+    const ageBox = document.getElementById('ageBox');
+    const toggle = document.getElementById('ageToggle');
+    const savedAge = parseInt(localStorage.getItem('userAge'));
+
+    if(savedAge) hideAgeBox();
+    else showAgeBox();
+
+    document.getElementById('ageInput').value = savedAge || "{{ default_age }}";
+
+    toggle.addEventListener('click', showAgeBox);
+    document.getElementById('saveAgeBtn').addEventListener('click', saveAge);
+
+    updateTimeValue(savedAge || 30);
     drawClock();
 };
 </script>

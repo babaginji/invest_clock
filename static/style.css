@@ -1,3 +1,6 @@
+/* =========================
+   全体の背景・文字
+========================= */
 body {
     font-family: 'Arial', sans-serif;
     text-align: center;
@@ -7,6 +10,9 @@ body {
     padding: 0;
 }
 
+/* =========================
+   メインコンテナ
+========================= */
 .container {
     display: flex;
     flex-direction: column;
@@ -16,25 +22,102 @@ body {
     padding: 20px;
 }
 
+/* =========================
+   タイトル
+========================= */
 h1, h2 {
     margin-bottom: 10px;
 }
 
+/* =========================
+   年齢入力ボックス
+========================= */
+.age-box {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255,255,255,0.9); /* 半透明白 */
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+/* =========================
+   年齢入力トグルボタン（右上の○）
+========================= */
+.age-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none;
+    z-index: 11;
+}
+
+/* =========================
+   入力欄（数字）
+========================= */
+input[type=number] {
+    padding: 10px;
+    font-size: 16px;
+    width: 120px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* =========================
+   保存ボタン
+========================= */
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* =========================
+   時計ラッパー
+========================= */
 .clock-wrapper {
     position: relative;
-    width: 300px;
+    width: 300px; /* 時計サイズ */
     height: 300px;
 }
 
+/* =========================
+   時計 Canvas
+========================= */
+#clockCanvas {
+    background-color: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   コイン表示用コンテナ
+========================= */
 #coinContainer {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
+    pointer-events: none; /* コインに触れなくする */
 }
 
+/* =========================
+   コインスタイル
+========================= */
 .coin {
     position: absolute;
     font-size: 14px;
@@ -45,34 +128,4 @@ h1, h2 {
     font-weight: bold;
     text-align: center;
     transform: translateX(-50%);
-}
-
-input[type=number] {
-    padding: 10px;
-    font-size: 16px;
-    width: 120px;
-    margin-right: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    margin-bottom: 20px;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-#clockCanvas {
-    background-color: #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 30px rgba(0,0,0,0.2);
 }
