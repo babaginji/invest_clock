@@ -30,16 +30,20 @@
 <script>
 const TARGET_AGE = 84;
 const ANNUAL_INTEREST = 0.07;
+const CURRENT_HOURLY_VALUE = 2600; // 現在時点の1時間あたり価値
 const COIN_FADE_TIME = 2000;
 
+// 年齢から84歳時点の1秒あたり価値を計算
 function calculateFutureValue(age) {
     const yearsToGo = TARGET_AGE - age;
-    return Math.pow(1 + ANNUAL_INTEREST, yearsToGo); // 1秒あたり
+    const currentPerSecond = CURRENT_HOURLY_VALUE / 3600;
+    return currentPerSecond * Math.pow(1 + ANNUAL_INTEREST, yearsToGo);
 }
 
+// 84歳時点の1時間あたり価値を表示
 function updateTimeValue(age) {
     const fv_per_second = calculateFutureValue(age);
-    const fv_per_hour = fv_per_second * 2600;
+    const fv_per_hour = fv_per_second * 3600;
     document.getElementById('timeValue').textContent = `84歳時点の価値: ¥${fv_per_hour.toFixed(2)} / 時間`;
 }
 
@@ -56,12 +60,8 @@ function saveAge() {
 }
 
 // 年齢入力ボックス表示/非表示
-function showAgeBox() {
-    document.getElementById('ageBox').style.display = 'flex';
-}
-function hideAgeBox() {
-    document.getElementById('ageBox').style.display = 'none';
-}
+function showAgeBox() { document.getElementById('ageBox').style.display = 'flex'; }
+function hideAgeBox() { document.getElementById('ageBox').style.display = 'none'; }
 
 // 外部クリックでボックス非表示
 document.addEventListener('click', function(e){
@@ -161,7 +161,7 @@ function startCoinAnimation(valuePerSecond) {
     const coinContainer = document.getElementById('coinContainer');
     const coin = document.createElement('div');
     coin.className = 'coin';
-    coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
+    coin.textContent = `¥${valuePerSecond.toFixed(2)}`; // 1秒あたり価値
     coinContainer.appendChild(coin);
 
     const offsetX = (Math.random() - 0.5) * 40; 
@@ -171,13 +171,13 @@ function startCoinAnimation(valuePerSecond) {
         { transform: 'translateY(0)', opacity: 1 },
         { transform: 'translateY(100px)', opacity: 0 }
     ], {
-        duration: 2000,
+        duration: COIN_FADE_TIME,
         easing: 'ease-out'
     });
 
     setTimeout(() => {
         coinContainer.removeChild(coin);
-    }, 2000);
+    }, COIN_FADE_TIME);
 }
 
 window.onload = function() {
