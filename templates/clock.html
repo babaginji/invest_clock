@@ -1,301 +1,228 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>複利時計</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人的資本時計</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="light-theme">
-    <div class="container">
-        <!-- 誕生日入力ボックス -->
-        <div id="birthdayBox" class="birthday-box">
-            <div class="select-row">
-                <select id="birthYear"></select>
-                <label for="birthYear">年</label>
-            </div>
-            <div class="select-row">
-                <select id="birthMonth"></select>
-                <label for="birthMonth">月</label>
-            </div>
-            <div class="select-row">
-                <select id="birthDay"></select>
-                <label for="birthDay">日</label>
-            </div>
-            <button id="saveBirthdayBtn">保存</button>
-
-            <!-- テーマ切り替え -->
-            <div class="theme-switch">
-                <span id="lightBtn" class="theme-btn">□</span>
-                <span id="darkBtn" class="theme-btn">■</span>
-            </div>
+<div class="container">
+    <!-- 誕生日入力 -->
+    <div id="birthdayBox" class="birthday-box">
+        <div class="select-row">
+            <select id="birthYear"></select><label>年</label>
         </div>
-
-        <!-- 右上のトグルボタン -->
-        <div id="birthdayToggle" class="birthday-toggle">○</div>
-
-        <!-- 現在価値の表示 -->
-        <h1 id="timeValue">現在価値: ¥0 / h</h1>
-
-        <!-- 時計 -->
-        <div class="clock-wrapper">
-            <canvas id="clockCanvas" width="320" height="320"></canvas>
-            <div id="coinContainer"></div>
+        <div class="select-row">
+            <select id="birthMonth"></select><label>月</label>
         </div>
+        <div class="select-row">
+            <select id="birthDay"></select><label>日</label>
+        </div>
+        <button id="saveBirthdayBtn">保存</button>
 
-        <!-- 合計値の表示 -->
-        <h2 id="totalValue">生涯合計: ¥0</h2>
+        <div class="theme-switch">
+            <span id="lightBtn" class="theme-btn">□</span>
+            <span id="darkBtn" class="theme-btn">■</span>
+        </div>
     </div>
 
-    <script>
-        const TARGET_AGE = 84;
-        const ANNUAL_INTEREST = 0.07;
-        const CURRENT_HOURLY_VALUE = 2600;
-        const COIN_FADE_TIME = 2000;
+    <div id="birthdayToggle" class="birthday-toggle">○</div>
 
-        let totalValue = 0; // 生涯合計
-        let birthDate = null;
+    <h1 id="timeValue">人的資本: ¥0 / h</h1>
 
-        // ---------------------------
-        // 誕生日入力処理
-        // ---------------------------
-        function getAgeFromBirthday(birth) {
-            const today = new Date();
-            let age = today.getFullYear() - birth.getFullYear();
-            const m = today.getMonth() - birth.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-                age--;
-            }
-            return age;
-        }
+    <div class="clock-wrapper">
+        <canvas id="clockCanvas" width="320" height="320"></canvas>
+        <div id="coinContainer"></div>
+    </div>
 
-        function calculateFutureValue(age) {
-            const yearsToGo = TARGET_AGE - age;
-            const currentPerSecond = CURRENT_HOURLY_VALUE / 3600;
-            return currentPerSecond * Math.pow(1 + ANNUAL_INTEREST, yearsToGo);
-        }
+    <h2 id="totalValue">84歳時点総資産: ¥0</h2>
+</div>
 
-        function updateTimeValue(age) {
-            const fv_per_second = calculateFutureValue(age);
-            const fv_per_hour = fv_per_second * 3600;
-            document.getElementById('timeValue').textContent =
-                `現在価値: ¥${fv_per_hour.toFixed(2)} / h`;
-        }
+<script>
+const TARGET_AGE = 84;
+const START_AGE = 18;
+const DAILY_SAVING = 62400;
+const ANNUAL_INTEREST = 0.07;
+const COIN_FADE_TIME = 2000;
+let birthDate = null;
+let totalAt84 = 0;
+let totalValue = 0;
 
-        function updateTotalValue() {
-            document.getElementById('totalValue').textContent =
-                `生涯合計: ¥${totalValue.toFixed(0)}`;
-        }
+// 日利
+const DAILY_RATE = Math.pow(1 + ANNUAL_INTEREST, 1/365) - 1;
 
-        function saveBirthday() {
-            const y = parseInt(document.getElementById('birthYear').value);
-            const m = parseInt(document.getElementById('birthMonth').value);
-            const d = parseInt(document.getElementById('birthDay').value);
+// ---------------------------
+// 誕生日から年齢算出
+// ---------------------------
+function getAgeFromBirthday(birth) {
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+}
 
-            if (isNaN(y) || isNaN(m) || isNaN(d)) {
-                alert("誕生日を正しく入力してください");
-                return;
-            }
+function daysSince18(birth) {
+    const start = new Date(birth.getFullYear() + START_AGE, birth.getMonth(), birth.getDate());
+    const now = new Date();
+    const diff = now - start;
+    return Math.max(0, Math.floor(diff / (1000*60*60*24)));
+}
 
-            birthDate = new Date(y, m - 1, d);
-            localStorage.setItem('userBirthday', birthDate.toISOString());
-            const age = getAgeFromBirthday(birthDate);
-            updateTimeValue(age);
-            initTotalValue(age);
-            hideBirthdayBox();
-        }
+function daysUntil84(birth) {
+    const end = new Date(birth.getFullYear() + TARGET_AGE, birth.getMonth(), birth.getDate());
+    const now = new Date();
+    const diff = end - now;
+    return Math.max(0, Math.floor(diff / (1000*60*60*24)));
+}
 
-        function showBirthdayBox() { document.getElementById('birthdayBox').style.display = 'flex'; }
-        function hideBirthdayBox() { document.getElementById('birthdayBox').style.display = 'none'; }
+// ---------------------------
+// 84歳時点総資産計算
+// ---------------------------
+function computeTotalAt84() {
+    const totalDays = (TARGET_AGE-START_AGE)*365.25;
+    totalAt84 = 0;
+    for(let d=0; d<totalDays; d++) {
+        totalAt84 += DAILY_SAVING * Math.pow(1+DAILY_RATE, totalDays-1-d);
+    }
+}
 
-        document.addEventListener('click', function(e){
-            const box = document.getElementById('birthdayBox');
-            const toggle = document.getElementById('birthdayToggle');
-            if (!box.contains(e.target) && !toggle.contains(e.target)) {
-                hideBirthdayBox();
-            }
-        });
+// ---------------------------
+// 現在の人的資本計算
+// ---------------------------
+function currentHumanCapital() {
+    const livedDays = daysSince18(birthDate);
+    const remainingDays = daysUntil84(birthDate);
+    let accumulated = 0;
+    for(let d=0; d<livedDays; d++) {
+        accumulated += DAILY_SAVING * Math.pow(1+DAILY_RATE, livedDays-1-d);
+    }
+    return totalAt84 - accumulated;
+}
 
-        // ---------------------------
-        // 時計描画
-        // ---------------------------
-        function drawClock() {
-            const canvas = document.getElementById('clockCanvas');
-            const ctx = canvas.getContext('2d');
-            const radius = canvas.height / 2;
-            ctx.translate(radius, radius);
-            setInterval(() => {
-                drawFace(ctx, radius);
-                drawTime(ctx, radius);
-            }, 1000);
-        }
+function updateTimeValue() {
+    if(!birthDate) return;
+    const humanCapital = currentHumanCapital();
+    const perHour = humanCapital / 24;
+    document.getElementById('timeValue').textContent =
+        `人的資本: ¥${perHour.toFixed(2)} / h`;
+}
 
-        function drawFace(ctx, radius) {
-            ctx.clearRect(-radius, -radius, radius*2, radius*2);
-            ctx.beginPath();
-            ctx.arc(0, 0, radius - 2, 0, 2*Math.PI);
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-color');
-            ctx.fill();
-            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
-            ctx.lineWidth = radius*0.05;
-            ctx.stroke();
+// ---------------------------
+// 時計・コイン
+// ---------------------------
+function drawClock() {
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.height / 2;
+    ctx.translate(radius, radius);
+    setInterval(() => {
+        drawFace(ctx, radius);
+        drawTime(ctx, radius);
+    }, 1000);
+}
 
-            // 目盛り
-            for (let num=1; num<=12; num++) {
-                const ang = num * Math.PI / 6;
-                ctx.beginPath();
-                const innerRadius = radius*0.88;
-                const outerRadius = radius*0.95;
-                ctx.moveTo(innerRadius * Math.sin(ang), -innerRadius * Math.cos(ang));
-                ctx.lineTo(outerRadius * Math.sin(ang), -outerRadius * Math.cos(ang));
-                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-        }
+function drawFace(ctx, radius) {
+    ctx.clearRect(-radius, -radius, radius*2, radius*2);
+    ctx.beginPath();
+    ctx.arc(0,0,radius-2,0,2*Math.PI);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-color');
+    ctx.fill();
+    ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
+    ctx.lineWidth = radius*0.05;
+    ctx.stroke();
 
-        function drawTime(ctx, radius) {
-            const now = new Date();
-            let hour = now.getHours() % 12;
-            let minute = now.getMinutes();
-            let second = now.getSeconds();
+    for(let num=1;num<=12;num++){
+        const ang = num*Math.PI/6;
+        ctx.beginPath();
+        ctx.moveTo(radius*0.88*Math.sin(ang), -radius*0.88*Math.cos(ang));
+        ctx.lineTo(radius*0.95*Math.sin(ang), -radius*0.95*Math.cos(ang));
+        ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
+        ctx.lineWidth=2; ctx.stroke();
+    }
+}
 
-            hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60));
-            drawHand(ctx, hour, radius*0.5, radius*0.07);
+function drawTime(ctx,radius){
+    const now=new Date();
+    let hour=now.getHours()%12;
+    let minute=now.getMinutes();
+    let second=now.getSeconds();
+    hour=(hour*Math.PI/6)+(minute*Math.PI/(6*60))+(second*Math.PI/(360*60));
+    drawHand(ctx,hour,radius*0.5,radius*0.07);
+    minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+    drawHand(ctx,minute,radius*0.7,radius*0.07);
+    second=second*Math.PI/30;
+    drawHand(ctx,second,radius*0.9,radius*0.02,'red');
 
-            minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
-            drawHand(ctx, minute, radius*0.7, radius*0.07);
+    if(birthDate){
+        const perSecond = currentHumanCapital()/24/3600;
+        startCoinAnimation(perSecond);
+        totalValue += perSecond;
+        document.getElementById('totalValue').textContent = 
+            `84歳時点総資産: ¥${totalValue.toFixed(0)}`;
+        updateTimeValue();
+    }
+}
 
-            second = second*Math.PI/30;
-            drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
+function drawHand(ctx,pos,length,width,color=null){
+    ctx.beginPath();
+    ctx.lineWidth=width;
+    ctx.lineCap="round";
+    ctx.strokeStyle=color||getComputedStyle(document.body).getPropertyValue('--text-color');
+    ctx.moveTo(0,0);
+    ctx.rotate(pos);
+    ctx.lineTo(0,-length);
+    ctx.stroke();
+    ctx.rotate(-pos);
+}
 
-            if (birthDate) {
-                const age = getAgeFromBirthday(birthDate);
-                const fv_per_second = calculateFutureValue(age);
-                startCoinAnimation(fv_per_second);
-                totalValue += fv_per_second;
-                updateTotalValue();
-            }
-        }
+function startCoinAnimation(valuePerSecond){
+    const coinContainer=document.getElementById('coinContainer');
+    const coin=document.createElement('div');
+    coin.className='coin';
+    coin.textContent=`¥${valuePerSecond.toFixed(2)}`;
+    coinContainer.appendChild(coin);
+    const offsetX=(Math.random()-0.5)*40;
+    coin.style.left=`calc(50% + ${offsetX}px)`;
+    coin.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(100px)',opacity:0}],{duration:COIN_FADE_TIME,easing:'ease-out'});
+    setTimeout(()=>coinContainer.removeChild(coin),COIN_FADE_TIME);
+}
 
-        function drawHand(ctx, pos, length, width, color=null) {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = color || getComputedStyle(document.body).getPropertyValue('--text-color');
-            ctx.moveTo(0,0);
-            ctx.rotate(pos);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-pos);
-        }
+// ---------------------------
+// 誕生日セレクト初期化
+// ---------------------------
+function initBirthdaySelectors(){
+    const ySel=document.getElementById('birthYear');
+    const mSel=document.getElementById('birthMonth');
+    const dSel=document.getElementById('birthDay');
+    const thisYear=new Date().getFullYear();
+    for(let y=thisYear;y>=1900;y--){let opt=document.createElement('option');opt.value=y;opt.text=y;ySel.appendChild(opt);}
+    for(let m=1;m<=12;m++){let opt=document.createElement('option');opt.value=m;opt.text=m;mSel.appendChild(opt);}
+    for(let d=1;d<=31;d++){let opt=document.createElement('option');opt.value=d;opt.text=d;dSel.appendChild(opt);}
+}
 
-        function startCoinAnimation(valuePerSecond) {
-            const coinContainer = document.getElementById('coinContainer');
-            const coin = document.createElement('div');
-            coin.className = 'coin';
-            coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
-            coinContainer.appendChild(coin);
+// ---------------------------
+// 初期化
+// ---------------------------
+window.onload=function(){
+    initBirthdaySelectors();
+    const toggle=document.getElementById('birthdayToggle');
+    const savedBirthday=localStorage.getItem('userBirthday');
+    if(savedBirthday){ birthDate=new Date(savedBirthday); hideBirthdayBox(); }
+    else showBirthdayBox();
 
-            const offsetX = (Math.random() - 0.5) * 40;
-            coin.style.left = `calc(50% + ${offsetX}px)`;
+    computeTotalAt84();
 
-            coin.animate([
-                { transform: 'translateY(0)', opacity: 1 },
-                { transform: 'translateY(100px)', opacity: 0 }
-            ], {
-                duration: COIN_FADE_TIME,
-                easing: 'ease-out'
-            });
+    toggle.addEventListener('click',showBirthdayBox);
+    document.getElementById('saveBirthdayBtn').addEventListener('click',saveBirthday);
+    document.getElementById('lightBtn').addEventListener('click',()=>setTheme('light'));
+    document.getElementById('darkBtn').addEventListener('click',()=>setTheme('dark'));
+    const savedTheme=localStorage.getItem('theme')||'light';
+    setTheme(savedTheme);
 
-            setTimeout(() => {
-                coinContainer.removeChild(coin);
-            }, COIN_FADE_TIME);
-        }
-
-        function initTotalValue(age) {
-            const fv_per_second = calculateFutureValue(age);
-            const secondsLived = age * 365.25 * 24 * 3600;
-            totalValue = fv_per_second * secondsLived;
-            updateTotalValue();
-        }
-
-        // ---------------------------
-        // テーマ切り替え
-        // ---------------------------
-        function setTheme(theme) {
-            if (theme === 'dark') {
-                document.body.classList.remove('light-theme');
-                document.body.classList.add('dark-theme');
-            } else {
-                document.body.classList.remove('dark-theme');
-                document.body.classList.add('light-theme');
-            }
-            localStorage.setItem('theme', theme);
-        }
-
-        // ---------------------------
-        // セレクトボックス初期化
-        // ---------------------------
-        function initBirthdaySelectors() {
-            const yearSel = document.getElementById('birthYear');
-            const monthSel = document.getElementById('birthMonth');
-            const daySel = document.getElementById('birthDay');
-
-            const thisYear = new Date().getFullYear();
-            for (let y = thisYear; y >= 1900; y--) {
-                let opt = document.createElement('option');
-                opt.value = y;
-                opt.text = y;
-                yearSel.appendChild(opt);
-            }
-            for (let m = 1; m <= 12; m++) {
-                let opt = document.createElement('option');
-                opt.value = m;
-                opt.text = m;
-                monthSel.appendChild(opt);
-            }
-            for (let d = 1; d <= 31; d++) {
-                let opt = document.createElement('option');
-                opt.value = d;
-                opt.text = d;
-                daySel.appendChild(opt);
-            }
-        }
-
-        // ---------------------------
-        // 初期化
-        // ---------------------------
-        window.onload = function() {
-            initBirthdaySelectors();
-
-            const toggle = document.getElementById('birthdayToggle');
-            const savedBirthday = localStorage.getItem('userBirthday');
-
-            if (savedBirthday) {
-                birthDate = new Date(savedBirthday);
-                hideBirthdayBox();
-            } else {
-                showBirthdayBox();
-            }
-
-            toggle.addEventListener('click', showBirthdayBox);
-            document.getElementById('saveBirthdayBtn').addEventListener('click', saveBirthday);
-
-            document.getElementById('lightBtn').addEventListener('click', () => setTheme('light'));
-            document.getElementById('darkBtn').addEventListener('click', () => setTheme('dark'));
-
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-
-            if (birthDate) {
-                const age = getAgeFromBirthday(birthDate);
-                updateTimeValue(age);
-                initTotalValue(age);
-            }
-
-            drawClock();
-        };
-    </script>
+    drawClock();
+};
+</script>
 </body>
 </html>
