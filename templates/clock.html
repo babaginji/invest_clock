@@ -20,18 +20,23 @@
         <!-- 現在価値の表示 -->
         <h1 id="timeValue">現在価値: ¥{{ future_value }} / h</h1>
 
-        <!-- 時計とコイン演出 -->
+        <!-- 時計 -->
         <div class="clock-wrapper">
             <canvas id="clockCanvas" width="300" height="300"></canvas>
             <div id="coinContainer"></div>
         </div>
+
+        <!-- 合計値の表示 -->
+        <h2 id="totalValue">生涯合計: ¥0</h2>
     </div>
 
     <script>
         const TARGET_AGE = 84;
         const ANNUAL_INTEREST = 0.07;
-        const CURRENT_HOURLY_VALUE = 2600; // 現在の1時間あたり価値
+        const CURRENT_HOURLY_VALUE = 2600;
         const COIN_FADE_TIME = 2000;
+
+        let totalValue = 0; // 生涯合計の値
 
         // 年齢から84歳時点の1秒あたり価値を計算
         function calculateFutureValue(age) {
@@ -48,12 +53,19 @@
                 `現在価値: ¥${fv_per_hour.toFixed(2)} / h`;
         }
 
+        // 合計値を表示
+        function updateTotalValue() {
+            document.getElementById('totalValue').textContent =
+                `生涯合計: ¥${totalValue.toFixed(0)}`;
+        }
+
         // 年齢保存
         function saveAge() {
             const age = parseInt(document.getElementById('ageInput').value);
             if (!isNaN(age) && age > 0 && age < 120) {
                 localStorage.setItem('userAge', age);
                 updateTimeValue(age);
+                initTotalValue(age);
                 hideAgeBox();
             } else {
                 alert("0~120の有効な年齢を入力してください");
@@ -95,7 +107,6 @@
             ctx.lineWidth = radius*0.05;
             ctx.stroke();
 
-            // 目盛線
             for (let num=1; num<=12; num++) {
                 const ang = num * Math.PI / 6;
                 ctx.beginPath();
@@ -108,7 +119,6 @@
                 ctx.stroke();
             }
 
-            // 数字
             ctx.font = radius*0.15 + "px Arial";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
@@ -139,10 +149,12 @@
             second = second*Math.PI/30;
             drawHand(ctx, second, radius*0.9, radius*0.02, 'red');
 
-            // 毎秒コイン生成
+            // 毎秒コイン生成と合計更新
             const age = parseInt(localStorage.getItem('userAge')) || 30;
             const fv_per_second = calculateFutureValue(age);
             startCoinAnimation(fv_per_second);
+            totalValue += fv_per_second;
+            updateTotalValue();
         }
 
         function drawHand(ctx, pos, length, width, color='black') {
@@ -162,7 +174,7 @@
             const coinContainer = document.getElementById('coinContainer');
             const coin = document.createElement('div');
             coin.className = 'coin';
-            coin.textContent = `¥${valuePerSecond.toFixed(2)}`; // 1秒あたり価値
+            coin.textContent = `¥${valuePerSecond.toFixed(2)}`;
             coinContainer.appendChild(coin);
 
             const offsetX = (Math.random() - 0.5) * 40;
@@ -181,6 +193,14 @@
             }, COIN_FADE_TIME);
         }
 
+        // 初期合計値を設定
+        function initTotalValue(age) {
+            const fv_per_second = calculateFutureValue(age);
+            const secondsLived = age * 365.25 * 24 * 3600;
+            totalValue = fv_per_second * secondsLived;
+            updateTotalValue();
+        }
+
         // ページ初期化
         window.onload = function() {
             const toggle = document.getElementById('ageToggle');
@@ -192,12 +212,14 @@
                 showAgeBox();
             }
 
-            document.getElementById('ageInput').value = savedAge || "{{ default_age }}";
+            const age = savedAge || "{{ default_age }}";
+            document.getElementById('ageInput').value = age;
 
             toggle.addEventListener('click', showAgeBox);
             document.getElementById('saveAgeBtn').addEventListener('click', saveAge);
 
-            updateTimeValue(savedAge || 30);
+            updateTimeValue(age);
+            initTotalValue(age);
             drawClock();
         };
     </script>
