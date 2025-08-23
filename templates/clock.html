@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>複利時計</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>年齢を入力して「現在時間価値」を計算</h2>
+        <input type="number" id="ageInput" min="0" max="120" placeholder="年齢を入力">
+        <button onclick="saveAge()">保存</button>
+
+        <h1 id="timeValue">現在時間価値: ¥{{ time_value }} / 時間</h1>
+        <div class="clock" id="clock"></div>
+    </div>
+
+    <script>
+        const TARGET_AGE = 84;
+        const ANNUAL_INTEREST = 0.07;
+
+        function calculateFutureValue(age) {
+            const yearsToGo = TARGET_AGE - age;
+            const principal = 1; // 1秒1円
+            return principal * Math.pow(1 + ANNUAL_INTEREST, yearsToGo);
+        }
+
+        function currentTimeValue(age) {
+            const fv = calculateFutureValue(age);
+            return fv / (365.25 * 24); // 1時間あたり
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const clock = document.getElementById('clock');
+            clock.textContent = now.toLocaleTimeString();
+        }
+
+        function updateTimeValue(age) {
+            const timeVal = currentTimeValue(age).toFixed(2);
+            document.getElementById('timeValue').textContent = `現在時間価値: ¥${timeVal} / 時間`;
+        }
+
+        function saveAge() {
+            const age = parseInt(document.getElementById('ageInput').value);
+            if (!isNaN(age) && age > 0 && age < 120) {
+                localStorage.setItem('userAge', age);
+                updateTimeValue(age);
+            } else {
+                alert("0~120の有効な年齢を入力してください");
+            }
+        }
+    </script>
+    <script>
+        window.onload = function() {
+            var age = parseInt(localStorage.getItem('userAge'));
+            if (!age) {
+                // default_age を文字列として埋め込み
+                age = parseInt("{{ default_age }}");
+            }
+            document.getElementById('ageInput').value = age;
+            updateTimeValue(age);
+            updateClock();
+            setInterval(updateClock, 1000);
+        };
+    </script>
+    
+    
+    
+</html>
