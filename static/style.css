@@ -135,6 +135,7 @@ body {
     font-size: 18px;
 }
 
+
 /* --------------------
    複利時計説明ボックス
 -------------------- */
@@ -145,6 +146,8 @@ body {
     left: 50%;
     width: 80%;
     max-width: 400px;
+    max-height: 60%;        /* 高さ制限を追加 */
+    overflow-y: auto;       /* 縦スクロール可能に */
     background-color: white;
     color: black;
     padding: 20px;
@@ -153,6 +156,19 @@ body {
     transform: translate(-50%, -50%);
     z-index: 20;
 }
+
+/* 説明ボックス内タイトル */
+.explanation-box h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+/* 説明文 */
+.explanation-box p {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
 
 .explanation-box h3 {
     margin-top: 0;
