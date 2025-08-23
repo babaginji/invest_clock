@@ -55,9 +55,6 @@
 </div>
 
 <script>
-// ---------------------------
-// 定数
-// ---------------------------
 const TARGET_AGE = 84;
 const ANNUAL_INTEREST = 0.07;
 const SECONDS_PER_HOUR = 3600;
@@ -66,31 +63,14 @@ const DAILY_CONTRIBUTION = 62400;
 const COIN_FADE_TIME = 2000;
 
 // ---------------------------
-// ユーティリティ関数
+// セレクト初期化
 // ---------------------------
-function daysBetween(date1, date2){ return (date2 - date1)/(1000*60*60*24); }
-
-function calculateHumanCapital(birthday){
-    const now = new Date();
-    const futureDate = new Date(birthday.getFullYear()+TARGET_AGE,birthday.getMonth(),birthday.getDate());
-    const diffMs = futureDate-now;
-    const diffYears = diffMs/(1000*60*60*24*365.25);
-    const fullYears = Math.floor(diffYears);
-    const extraDays = (diffYears-fullYears)*365.25;
-    let value = 1;
-    value *= Math.pow(1+ANNUAL_INTEREST, fullYears);
-    value *= Math.pow(1+ANNUAL_INTEREST/365, extraDays);
-    return value*2600; // 1時間あたり
-}
-
-function calculateTotalHumanCapital(birthday){
-    const startDate=new Date(birthday.getFullYear()+START_AGE,birthday.getMonth(),birthday.getDate());
-    const now=new Date();
-    let diffDays=daysBetween(startDate,now);
-    if(diffDays<0) diffDays=0;
-    let total=DAILY_CONTRIBUTION*diffDays;
-    total*=Math.pow(1+ANNUAL_INTEREST,diffDays/365);
-    return total;
+function populateSelects(selId,yearMax=2025){
+    const sel=document.getElementById(selId);
+    sel.innerHTML='';
+    for(let i=(selId.includes('year')?1900:1); i<=(selId.includes('year')?yearMax:selId.includes('month')?12:31); i++){
+        sel.add(new Option(i,i));
+    }
 }
 
 // ---------------------------
@@ -111,7 +91,7 @@ function saveBirthday(yearSel,monthSel,daySel,boxId){
 }
 
 // ---------------------------
-// □■テーマ切替
+// 白黒テーマ
 // ---------------------------
 function setupTheme(whiteBtn,blackBtn){
     whiteBtn.onclick=()=>{document.body.style.setProperty('--bg-color','white'); document.body.style.setProperty('--text-color','black');};
@@ -119,13 +99,31 @@ function setupTheme(whiteBtn,blackBtn){
 }
 
 // ---------------------------
-// セレクト初期化
+// 人的資本計算
 // ---------------------------
-function populateSelects(selId,yearMax=2025){
-    const sel=document.getElementById(selId);
-    for(let i=(selId.includes('year')?1900:1); i<=(selId.includes('year')?yearMax:selId.includes('month')?12:31); i++){
-        sel.add(new Option(i,i));
-    }
+function daysBetween(date1,date2){ return (date2-date1)/(1000*60*60*24); }
+
+function calculateHumanCapital(birthday){
+    const now=new Date();
+    const futureDate=new Date(birthday.getFullYear()+TARGET_AGE,birthday.getMonth(),birthday.getDate());
+    const diffMs=futureDate-now;
+    const diffYears=diffMs/(1000*60*60*24*365.25);
+    const fullYears=Math.floor(diffYears);
+    const extraDays=(diffYears-fullYears)*365.25;
+    let value=1;
+    value*=Math.pow(1+ANNUAL_INTEREST,fullYears);
+    value*=Math.pow(1+ANNUAL_INTEREST/365,extraDays);
+    return value*2600;
+}
+
+function calculateTotalHumanCapital(birthday){
+    const startDate=new Date(birthday.getFullYear()+START_AGE,birthday.getMonth(),birthday.getDate());
+    const now=new Date();
+    let diffDays=daysBetween(startDate,now);
+    if(diffDays<0) diffDays=0;
+    let total=DAILY_CONTRIBUTION*diffDays;
+    total*=Math.pow(1+ANNUAL_INTEREST,diffDays/365);
+    return total;
 }
 
 // ---------------------------
@@ -140,8 +138,7 @@ function updateValues(){
     const totalEl=document.getElementById('totalValue');
     totalEl.dataset.total=total;
     totalEl.textContent=`総人的資本: ¥${total.toFixed(2)}`;
-
-    // 右上選択に反映
+    // 右上ボックスの初期値に反映
     document.getElementById('yearSelect2').value=birthday.getFullYear();
     document.getElementById('monthSelect2').value=birthday.getMonth()+1;
     document.getElementById('daySelect2').value=birthday.getDate();
@@ -165,13 +162,12 @@ function drawClock(){
         ctx.clearRect(-radius,-radius,radius*2,radius*2);
         ctx.beginPath();
         ctx.arc(0,0,radius,0,2*Math.PI);
-        ctx.fillStyle='white';
+        ctx.fillStyle='var(--bg-color)';
         ctx.fill();
         ctx.strokeStyle='#333';
         ctx.lineWidth=radius*0.05;
         ctx.stroke();
 
-        // 目盛線
         for(let num=1;num<=12;num++){
             const ang=num*Math.PI/6;
             ctx.beginPath();
@@ -183,7 +179,6 @@ function drawClock(){
             ctx.stroke();
         }
 
-        // 数字
         ctx.font=radius*0.15+'px Arial';
         ctx.textAlign='center';
         ctx.textBaseline='middle';
@@ -271,8 +266,17 @@ window.onload=function(){
     if(birthday) updateValues();
     drawClock();
 
-    document.getElementById('saveInitialBirthdayBtn').onclick=()=>saveBirthday(document.getElementById('yearSelect'),document.getElementById('monthSelect'),document.getElementById('daySelect'),'initialBirthdayBox');
-    document.getElementById('saveBirthdayBtn').onclick=()=>saveBirthday(document.getElementById('yearSelect2'),document.getElementById('monthSelect2'),document.getElementById('daySelect2'),'birthdayBox');
+    document.getElementById('saveInitialBirthdayBtn').onclick=()=>saveBirthday(
+        document.getElementById('yearSelect'),
+        document.getElementById('monthSelect'),
+        document.getElementById('daySelect'),
+        'initialBirthdayBox');
+
+    document.getElementById('saveBirthdayBtn').onclick=()=>saveBirthday(
+        document.getElementById('yearSelect2'),
+        document.getElementById('monthSelect2'),
+        document.getElementById('daySelect2'),
+        'birthdayBox');
 
     document.getElementById('birthdayToggle').onclick=()=>{ 
         const box=document.getElementById('birthdayBox');

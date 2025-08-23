@@ -42,7 +42,7 @@ body {
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 20px;
-    display: flex;
+    display: none; /* 初期非表示、JSで表示制御 */
     flex-direction: column;
     gap: 10px;
     z-index: 101;
@@ -60,7 +60,7 @@ body {
     border-radius: 8px;
     padding: 10px;
     flex-direction: column;
-    display: none; /* 初期は非表示 */
+    display: none;
     gap: 10px;
     z-index: 99;
 }
