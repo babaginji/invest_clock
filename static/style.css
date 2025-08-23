@@ -26,9 +26,9 @@ body {
 }
 
 /* =========================
-   年齢入力ボックス
+   誕生日入力ボックス
 ========================= */
-.age-box {
+.birthday-box {
     display: none;
     flex-direction: column;
     position: absolute;
@@ -41,7 +41,11 @@ body {
     z-index: 100;
 }
 
-.age-toggle {
+.select-row {
+    margin: 5px 0;
+}
+
+.birthday-toggle {
     position: absolute;
     top: 10px;
     right: 20px;
