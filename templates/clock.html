@@ -30,6 +30,13 @@
 
     <!-- 複利時計説明ボタン -->
     <button id="showExplanationBtn">複利時計とは</button>
+    <!-- 表示切替ボタン群（右上ボックス内に移動） -->
+    <div class="toggle-section">
+        <button class="toggle-btn" data-target="appTitle">複利時計</button>
+        <button class="toggle-btn" data-target="timeValue">人的資本</button>
+        <button class="toggle-btn" data-target="coinContainer">コイン</button>
+        <button class="toggle-btn" data-target="totalValue">人的資本の累計</button>
+    </div>
 </div>
 
         <!-- 人的資本の上にタイトル追加 -->
@@ -49,24 +56,17 @@
 
         <!-- 人的資本累計 -->
         <h2 id="totalValue">人的資本の累計: ¥0</h2>
-
-        <!-- 説明ボックス（非表示） -->
-        <div id="explanationBox" class="explanation-box">
-            <h3>複利時計の説明</h3>
-            <p>
-                複利時計は、あなたの現在の人的資本（1時間あたりの価値）を、84歳時点まで複利運用した場合にいくらになるかを表示する時計です。<br>
-                誕生日を入力すると、年齢と日数をもとに現在価値を計算します。<br>
-                時計の下には、人的資本の増加を1秒ごとに視覚化したコインアニメーションがあります。
-            </p>
-        </div>
-    </div>
-    <!-- 表示切替ボタン群（右上ボックス内に追加する） -->
-<div class="toggle-section">
-    <button class="toggle-btn" data-target="appTitle">複利時計</button>
-    <button class="toggle-btn" data-target="timeValue">人的資本</button>
-    <button class="toggle-btn" data-target="coinContainer">コイン</button>
-    <button class="toggle-btn" data-target="totalValue">人的資本の累計</button>
+<!-- 説明ボックス（非表示） -->
+<div id="explanationBox" class="explanation-box">
+    <h3>複利時計の説明</h3>
+    <p>
+        複利時計は、あなたの現在の人的資本（1時間あたりの価値）を、84歳時点まで複利運用した場合にいくらになるかを表示する時計です。<br>
+        誕生日を入力すると、年齢と日数をもとに現在価値を計算します。<br>
+        時計の下には、人的資本の増加を1秒ごとに視覚化したコインアニメーションがあります。
+    </p>
 </div>
+</div>
+
 
 
     <script>
