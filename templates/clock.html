@@ -9,35 +9,42 @@
 <body class="light-theme">
     <div class="container">
 
-        <!-- 年齢入力ボックス → 生年月日入力ボックス -->
-<div id="birthdayBox" class="birthday-box">
-    <!-- タイトル追加 -->
-    <div class="box-title">生年月日</div>
+        <!-- 生年月日入力ボックス -->
+        <div id="birthdayBox" class="birthday-box">
+            <div class="box-title">生年月日</div>
+            <div class="select-row">
+                <select id="birthYear"></select>
+                <select id="birthMonth"></select>
+                <select id="birthDay"></select>
+            </div>
+            <button id="saveBirthdayBtn">保存</button>
 
-    <!-- 年/月/日セレクトボックス -->
-    <div class="select-row">
-        <select id="birthYear"></select>
-        <select id="birthMonth"></select>
-        <select id="birthDay"></select>
-    </div>
-    <button id="saveBirthdayBtn">保存</button>
+            <!-- テーマ切替 -->
+            <div class="theme-switch">
+                <span id="lightBtn" class="theme-btn">□</span>
+                <span id="darkBtn" class="theme-btn">■</span>
+            </div>
 
-    <!-- □■とテーマ切替 -->
-    <div class="theme-switch">
-        <span id="lightBtn" class="theme-btn">□</span>
-        <span id="darkBtn" class="theme-btn">■</span>
-    </div>
+            <!-- 複利時計説明ボタン -->
+            <button id="showExplanationBtn">複利時計とは</button>
 
-    <!-- 複利時計説明ボタン -->
-    <button id="showExplanationBtn">複利時計とは</button>
-</div>
+            <!-- 表示/非表示切替ボタン -->
+            <div class="toggle-buttons">
+                <button class="toggle-btn" data-target="title">複利時計</button>
+                <button class="toggle-btn" data-target="timeValue">人的資本</button>
+                <button class="toggle-btn" data-target="coinContainer">コイン</button>
+                <button class="toggle-btn" data-target="totalValue">人的資本の累計</button>
+            </div>
+        </div>
 
-
-        <!-- 右上の丸 -->
+        <!-- 右上の○ -->
         <div id="birthdayToggle" class="birthday-toggle">○</div>
 
-        <!-- 人的資本表示 -->
-        <h1 id="timeValue">人的資本: ¥0 /h</h1>
+        <!-- 大見出し -->
+        <h1 id="title">複利時計</h1>
+
+        <!-- 人的資本 -->
+        <h2 id="timeValue">人的資本: ¥0 /h</h2>
 
         <!-- 時計 -->
         <div class="clock-wrapper">
@@ -45,25 +52,31 @@
             <div id="coinContainer"></div>
         </div>
 
-        <!-- 人的資本累計 -->
+        <!-- 累計 -->
         <h2 id="totalValue">人的資本の累計: ¥0</h2>
 
-        <!-- 説明ボックス（非表示） -->
+        <!-- 説明ボックス -->
         <div id="explanationBox" class="explanation-box">
             <h3>複利時計の説明</h3>
-            <p>
-                「時は金なり」。誰もが耳にしたことのある言葉ですが、その本当の意味を実感できている人は少ないのではないでしょうか。人は生まれたとき、膨大な人的資本（時間）を持っています。複利時計は日本人の平均寿命84歳、平均時給2600円をもとに、人生全体の時間の価値をお金用いて可視化しています。人生において、時間（人的資本）とお金（金融資産）の合計は常に一定になります。若いときは時間という大きな資本を持ち、年齢とともにそれを働いてお金に変えていきます。若いときは人的資本の比重が圧倒的に大きく、年齢を重ねるごとに金融資産の比重が増えていきます。金融資産は投資によって指数関数的に増加します。例えばs&p500などに投資すれば年利7%の増加が期待できます。そして重要なのは、人的資本も同じように指数関数的に減少していっているということです。金融資産が指数関数的に増加するということは、人的資本が単純に直線的に減っていくのではなく、指数関数的に加速しながら減少していっているということを表します。つまり、時間の価値は「一定に失われていく」のではなく、想像以上の速さで消えていっているのです。お金の大切さはわかっていても、若さの価値がいかに大きいかに気づいている人は多くありません。例えば、22歳の1時間の人的資本価値は約17万円に相当します。これは単なる比喩ではなく、2600円をS&P500で運用すれば84歳時点で17万円に成長するという現実の数字です。つまり、若い時間はすでに巨大な金融資産に匹敵する価値を秘めており、それをどう使うかによって未来が大きく変わります。複利時計は、その「見えない時間の価値」を可視化するためのツールです。画面に表示される数字は、今この瞬間に失われている人的資本の大きさを表します。それはあまりに大きく、時に疑いたくなるかもしれません。しかし、それが「今の」あなたの時間の真の価値なのです。若ければ若いほど時間の価値は高く、最も価値のある瞬間は常に「今」です。人的資本は待ってくれません。だからこそ、この時計はあなたの背中を押します。やる気が出ないとだらだらしている場合ではありません。立ち止まるのではなく、行動するのは今しかないのです。複利時計はあなたの「今の価値」を常に示してくれます。
-            </p>
+            <div class="explanation-content">
+                <p>
+                    「時は金なり」…。人は生まれたとき、膨大な人的資本（時間）を持っています。<br>
+                    複利時計は日本人の平均寿命84歳、平均時給2600円をもとに、人生全体の時間の価値を可視化します。<br><br>
+                    若いときは人的資本の比重が大きく、年齢とともにそれを働いてお金に変えていきます。<br>
+                    時間の価値は直線的にではなく指数関数的に減少していきます。<br>
+                    この時計は、その「今」の価値を常に示し、あなたの行動を後押しするためのツールです。
+                </p>
+            </div>
         </div>
     </div>
 
     <script>
         // ---------------------------
-        // 定数設定
+        // 定数
         // ---------------------------
         const TARGET_AGE = 84;
         const ANNUAL_INTEREST = 0.07;
-        const CURRENT_HOURLY_VALUE = 2600;  // 現在の1時間あたり人的資本
+        const CURRENT_HOURLY_VALUE = 2600;
         const COIN_FADE_TIME = 2000;
 
         // ---------------------------
@@ -72,9 +85,7 @@
         let birthDate = null;
         let totalValue = 0;
 
-        // ---------------------------
-        // 年齢計算（年＋日数）
-        // ---------------------------
+        // 年齢（日数）計算
         function getAgeInDays(birth) {
             const today = new Date();
             const diff = today - birth;
@@ -84,27 +95,17 @@
             return { years: ageYears, days: ageDays, totalDays: ageInDays };
         }
 
-        // ---------------------------
-        // 84歳までの複利計算
-        // ---------------------------
+        // 複利計算（年＋日）
         function calculateFutureHourlyValue(ageYears, ageDays) {
             const remainingYears = TARGET_AGE - ageYears - 1;
             const remainingDays = Math.round(365.25 - ageDays);
             const perSecond = CURRENT_HOURLY_VALUE / 3600;
-
-            // 残り年数の複利
             let valueAfterYears = perSecond * Math.pow(1 + ANNUAL_INTEREST, remainingYears);
-
-            // 日利換算（年利7%）
             const dailyRate = Math.pow(1 + ANNUAL_INTEREST, 1/365.25) - 1;
-            let valueAfterDays = valueAfterYears * Math.pow(1 + dailyRate, remainingDays);
-
-            return valueAfterDays;
+            return valueAfterYears * Math.pow(1 + dailyRate, remainingDays);
         }
 
-        // ---------------------------
-        // 現在価値表示更新
-        // ---------------------------
+        // 人的資本更新
         function updateTimeValue() {
             if (!birthDate) return;
             const age = getAgeInDays(birthDate);
@@ -115,18 +116,14 @@
             return fv_per_second;
         }
 
-        // ---------------------------
-        // 累計値更新
-        // ---------------------------
+        // 累計更新
         function updateTotalValue(fv_per_second) {
             totalValue += fv_per_second;
             document.getElementById('totalValue').textContent =
                 `人的資本の累計: ¥${totalValue.toFixed(0)}`;
         }
 
-        // ---------------------------
         // 誕生日保存
-        // ---------------------------
         function saveBirthday() {
             const y = parseInt(document.getElementById('birthYear').value);
             const m = parseInt(document.getElementById('birthMonth').value);
@@ -139,184 +136,136 @@
             updateTotalValue(fv_per_second);
         }
 
-        // ---------------------------
-        // 誕生日入力ボックス表示/非表示
-        // ---------------------------
-        function showBirthdayBox() { document.getElementById('birthdayBox').style.display='flex'; }
-        function hideBirthdayBox() { document.getElementById('birthdayBox').style.display='none'; }
+        // ボックス表示/非表示
+        function showBirthdayBox(){ document.getElementById('birthdayBox').style.display='flex'; }
+        function hideBirthdayBox(){ document.getElementById('birthdayBox').style.display='none'; }
+        function showExplanationBox(){ document.getElementById('explanationBox').style.display='block'; }
+        function hideExplanationBox(){ document.getElementById('explanationBox').style.display='none'; }
 
-        // ---------------------------
-        // 説明ボックス表示/非表示
-        // ---------------------------
-        function showExplanationBox() { 
-            document.getElementById('explanationBox').style.display='block'; 
-        }
-        function hideExplanationBox() { 
-            document.getElementById('explanationBox').style.display='none'; 
-        }
-
-        // ---------------------------
-        // 外部クリックでボックス非表示
-        // ---------------------------
+        // 外部クリックで閉じる
         document.addEventListener('click', function(e){
-            const bBox = document.getElementById('birthdayBox');
-            const toggle = document.getElementById('birthdayToggle');
-            const expBox = document.getElementById('explanationBox');
-            const explainBtn = document.getElementById('showExplanationBtn');
+            const bBox=document.getElementById('birthdayBox');
+            const toggle=document.getElementById('birthdayToggle');
+            const expBox=document.getElementById('explanationBox');
+            const explainBtn=document.getElementById('showExplanationBtn');
 
-            if(!bBox.contains(e.target) && !toggle.contains(e.target)){
-                hideBirthdayBox();
-            }
-
-            if(!expBox.contains(e.target) && e.target !== explainBtn){
-                hideExplanationBox();
-            }
+            if(!bBox.contains(e.target)&&!toggle.contains(e.target)){ hideBirthdayBox(); }
+            if(!expBox.contains(e.target)&&e.target!==explainBtn){ hideExplanationBox(); }
         });
 
-        // ---------------------------
-        // 時計描画
-        // ---------------------------
-        function drawClock() {
-            const canvas = document.getElementById('clockCanvas');
-            const ctx = canvas.getContext('2d');
-            const radius = canvas.height / 2;
-            ctx.translate(radius, radius);
-
-            setInterval(() => {
-                drawFace(ctx, radius);
-                drawTime(ctx, radius);
-            }, 1000);
+        // 時計
+        function drawClock(){
+            const canvas=document.getElementById('clockCanvas');
+            const ctx=canvas.getContext('2d');
+            const radius=canvas.height/2;
+            ctx.translate(radius,radius);
+            setInterval(()=>{
+                drawFace(ctx,radius);
+                drawTime(ctx,radius);
+            },1000);
         }
-
-        function drawFace(ctx, radius){
-            ctx.clearRect(-radius, -radius, radius*2, radius*2);
+        function drawFace(ctx,radius){
+            ctx.clearRect(-radius,-radius,radius*2,radius*2);
             ctx.beginPath();
-            ctx.arc(0, 0, radius-2, 0, 2*Math.PI);
-            ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg-color');
+            ctx.arc(0,0,radius-2,0,2*Math.PI);
+            ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--bg-color');
             ctx.fill();
-            ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
-            ctx.lineWidth = radius*0.05;
-            ctx.stroke();
-
-            for(let num=1; num<=12; num++){
-                const ang = num*Math.PI/6;
+            ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--text-color');
+            ctx.lineWidth=radius*0.05; ctx.stroke();
+            for(let num=1;num<=12;num++){
+                const ang=num*Math.PI/6;
                 ctx.beginPath();
-                const innerR = radius*0.88;
-                const outerR = radius*0.95;
-                ctx.moveTo(innerR*Math.sin(ang), -innerR*Math.cos(ang));
-                ctx.lineTo(outerR*Math.sin(ang), -outerR*Math.cos(ang));
-                ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text-color');
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                const innerR=radius*0.88, outerR=radius*0.95;
+                ctx.moveTo(innerR*Math.sin(ang),-innerR*Math.cos(ang));
+                ctx.lineTo(outerR*Math.sin(ang),-outerR*Math.cos(ang));
+                ctx.strokeStyle=getComputedStyle(document.body).getPropertyValue('--text-color');
+                ctx.lineWidth=2; ctx.stroke();
             }
         }
-
-        function drawTime(ctx, radius){
-            const now = new Date();
-            let hour = now.getHours()%12;
-            let minute = now.getMinutes();
-            let second = now.getSeconds();
-
-            hour = (hour*Math.PI/6)+(minute*Math.PI/(6*60))+(second*Math.PI/(360*60));
-            drawHand(ctx, hour, radius*0.5, radius*0.07);
-
-            minute = (minute*Math.PI/30)+(second*Math.PI/(30*60));
-            drawHand(ctx, minute, radius*0.7, radius*0.07);
-
-            second = second*Math.PI/30;
-            drawHand(ctx, second, radius*0.9, radius*0.02,'red');
-
+        function drawTime(ctx,radius){
+            const now=new Date();
+            let hour=now.getHours()%12,minute=now.getMinutes(),second=now.getSeconds();
+            hour=(hour*Math.PI/6)+(minute*Math.PI/(6*60))+(second*Math.PI/(360*60));
+            drawHand(ctx,hour,radius*0.5,radius*0.07);
+            minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+            drawHand(ctx,minute,radius*0.7,radius*0.07);
+            second=second*Math.PI/30;
+            drawHand(ctx,second,radius*0.9,radius*0.02,'red');
             if(birthDate){
-                const fv_per_second = updateTimeValue();
+                const fv_per_second=updateTimeValue();
                 updateTotalValue(fv_per_second);
                 startCoinAnimation(fv_per_second);
             }
         }
-
-        function drawHand(ctx, pos, length, width, color=null){
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = color||getComputedStyle(document.body).getPropertyValue('--text-color');
-            ctx.moveTo(0,0);
-            ctx.rotate(pos);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-pos);
+        function drawHand(ctx,pos,length,width,color=null){
+            ctx.beginPath(); ctx.lineWidth=width; ctx.lineCap='round';
+            ctx.strokeStyle=color||getComputedStyle(document.body).getPropertyValue('--text-color');
+            ctx.moveTo(0,0); ctx.rotate(pos); ctx.lineTo(0,-length); ctx.stroke(); ctx.rotate(-pos);
         }
-
         function startCoinAnimation(valuePerSecond){
-            const coinContainer = document.getElementById('coinContainer');
-            const coin = document.createElement('div');
-            coin.className='coin';
+            const container=document.getElementById('coinContainer');
+            const coin=document.createElement('div'); coin.className='coin';
             coin.textContent=`¥${valuePerSecond.toFixed(0)}`;
-            coinContainer.appendChild(coin);
-            const offsetX = (Math.random()-0.5)*40;
+            container.appendChild(coin);
+            const offsetX=(Math.random()-0.5)*40;
             coin.style.left=`calc(50% + ${offsetX}px)`;
-            coin.animate([
-                { transform: 'translateY(0)', opacity: 1},
-                { transform: 'translateY(100px)', opacity: 0}
-            ], { duration: COIN_FADE_TIME, easing:'ease-out' });
-            setTimeout(()=>coinContainer.removeChild(coin), COIN_FADE_TIME);
+            coin.animate([{transform:'translateY(0)',opacity:1},{transform:'translateY(100px)',opacity:0}],
+                {duration:COIN_FADE_TIME,easing:'ease-out'});
+            setTimeout(()=>container.removeChild(coin),COIN_FADE_TIME);
         }
 
-        // ---------------------------
         // テーマ切替
-        // ---------------------------
         function setTheme(theme){
-            if(theme==='dark'){
-                document.body.classList.remove('light-theme');
-                document.body.classList.add('dark-theme');
-            }else{
-                document.body.classList.remove('dark-theme');
-                document.body.classList.add('light-theme');
-            }
-            localStorage.setItem('theme', theme);
+            if(theme==='dark'){document.body.classList.remove('light-theme');document.body.classList.add('dark-theme');}
+            else{document.body.classList.remove('dark-theme');document.body.classList.add('light-theme');}
+            localStorage.setItem('theme',theme);
         }
 
-        // ---------------------------
-        // 誕生日セレクトボックス初期化
-        // ---------------------------
+        // 表示/非表示切替
+        function initToggleButtons(){
+            document.querySelectorAll('.toggle-btn').forEach(btn=>{
+                const targetId=btn.dataset.target;
+                const target=document.getElementById(targetId);
+                let hidden=localStorage.getItem('hide_'+targetId)==='true';
+                if(hidden){target.style.display='none';btn.classList.add('inactive');}
+                btn.addEventListener('click',()=>{
+                    hidden=!hidden;
+                    target.style.display=hidden?'none':'';
+                    btn.classList.toggle('inactive',hidden);
+                    localStorage.setItem('hide_'+targetId,hidden);
+                });
+            });
+        }
+
+        // 誕生日セレクト初期化
         function initBirthdaySelectors(){
-            const yearSel=document.getElementById('birthYear');
-            const monthSel=document.getElementById('birthMonth');
-            const daySel=document.getElementById('birthDay');
+            const ySel=document.getElementById('birthYear');
+            const mSel=document.getElementById('birthMonth');
+            const dSel=document.getElementById('birthDay');
             const thisYear=new Date().getFullYear();
-            for(let y=thisYear;y>=1900;y--) yearSel.add(new Option(y,y));
-            for(let m=1;m<=12;m++) monthSel.add(new Option(m,m));
-            for(let d=1;d<=31;d++) daySel.add(new Option(d,d));
+            for(let y=thisYear;y>=1900;y--) ySel.add(new Option(y,y));
+            for(let m=1;m<=12;m++) mSel.add(new Option(m,m));
+            for(let d=1;d<=31;d++) dSel.add(new Option(d,d));
         }
 
-        // ---------------------------
         // 初期化
-        // ---------------------------
         window.onload=function(){
             initBirthdaySelectors();
-
-            // 保存されている誕生日があれば復元
-            const savedBirth = localStorage.getItem('userBirthday');
+            const savedBirth=localStorage.getItem('userBirthday');
             if(savedBirth){
                 birthDate=new Date(savedBirth);
                 document.getElementById('birthYear').value=birthDate.getFullYear();
                 document.getElementById('birthMonth').value=birthDate.getMonth()+1;
                 document.getElementById('birthDay').value=birthDate.getDate();
                 hideBirthdayBox();
-            }else{
-                showBirthdayBox();
-            }
-
-            document.getElementById('birthdayToggle').addEventListener('click', showBirthdayBox);
-            document.getElementById('saveBirthdayBtn').addEventListener('click', saveBirthday);
-
-            document.getElementById('showExplanationBtn').addEventListener('click', showExplanationBox);
-
-            // テーマ初期化
-            const savedTheme = localStorage.getItem('theme')||'light';
-            setTheme(savedTheme);
-
-            document.getElementById('lightBtn').addEventListener('click', ()=>setTheme('light'));
-            document.getElementById('darkBtn').addEventListener('click', ()=>setTheme('dark'));
-
+            }else{ showBirthdayBox(); }
+            document.getElementById('birthdayToggle').addEventListener('click',showBirthdayBox);
+            document.getElementById('saveBirthdayBtn').addEventListener('click',saveBirthday);
+            document.getElementById('showExplanationBtn').addEventListener('click',showExplanationBox);
+            setTheme(localStorage.getItem('theme')||'light');
+            document.getElementById('lightBtn').addEventListener('click',()=>setTheme('light'));
+            document.getElementById('darkBtn').addEventListener('click',()=>setTheme('dark'));
+            initToggleButtons();
             drawClock();
         };
     </script>
