@@ -34,7 +34,6 @@
 
         <!-- 人的資本の上にタイトル追加 -->
         <h1 id="appTitle">複利時計</h1>
-        <h2 id="timeValue">人的資本: ¥{{ future_value }} / h</h2>
 
         <!-- 右上の丸 -->
         <div id="birthdayToggle" class="birthday-toggle">○</div>
@@ -61,6 +60,14 @@
             </p>
         </div>
     </div>
+    <!-- 表示切替ボタン群（右上ボックス内に追加する） -->
+<div class="toggle-section">
+    <button class="toggle-btn" data-target="appTitle">複利時計</button>
+    <button class="toggle-btn" data-target="timeValue">人的資本</button>
+    <button class="toggle-btn" data-target="coinContainer">コイン</button>
+    <button class="toggle-btn" data-target="totalValue">人的資本の累計</button>
+</div>
+
 
     <script>
         // ---------------------------
@@ -160,15 +167,7 @@
             document.getElementById('explanationBox').style.display='none'; 
         }
         
-        // ---------------------------
-        // 表示非表示切り替えボタン
-        // ---------------------------
-        <div class="toggle-section">
-            <button class="toggle-btn" data-target="appTitle">複利時計</button>
-            <button class="toggle-btn" data-target="timeValue">人的資本</button>
-            <button class="toggle-btn" data-target="coinContainer">コイン</button>
-            <button class="toggle-btn" data-target="lifetimeCapital">人的資本の累計</button>
-        </div>
+        
         // 表示/非表示切替
         document.querySelectorAll('.toggle-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -211,14 +210,12 @@
             const canvas = document.getElementById('clockCanvas');
             const ctx = canvas.getContext('2d');
             const radius = canvas.height / 2;
-            ctx.translate(radius, radius);
-
+            ctx.translate(radius, radius); // 初回だけ
             setInterval(() => {
                 drawFace(ctx, radius);
                 drawTime(ctx, radius);
             }, 1000);
         }
-
         function drawFace(ctx, radius){
             ctx.clearRect(-radius, -radius, radius*2, radius*2);
             ctx.beginPath();
